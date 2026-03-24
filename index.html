@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NutriAI — Your Personal Nutrition Planner</title>
+  <meta name="description" content="NutriAI creates personalized meal plans based on your body, your goals, and your taste. Science-backed nutrition made simple.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #3B82F6;
+      --primary-dark: #2563EB;
+      --secondary: #84CC16;
+      --secondary-dark: #65A30D;
+      --accent: #8B5CF6;
+      --accent-dark: #7C3AED;
+      --bg: #0B1120;
+      --bg-alt: #111827;
+      --bg-card: #1E293B;
+      --bg-card-hover: #263548;
+      --text: #F1F5F9;
+      --text-muted: #94A3B8;
+      --text-dim: #64748B;
+      --border: #1E293B;
+      --border-light: #334155;
+      --success: #22C55E;
+      --warning: #F59E0B;
+      --error: #EF4444;
+      --glow-blue: rgba(59,130,246,0.15);
+      --glow-purple: rgba(139,92,246,0.15);
+      --glow-green: rgba(132,204,22,0.1);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ═══════════════ UTILITIES ═══════════════ */
+    .container { max-width: 1140px; margin: 0 auto; padding: 0 24px; }
+    .section { padding: 100px 0; }
+    .text-center { text-align: center; }
+    .text-gradient {
+      background: linear-gradient(135deg, #fff 0%, var(--primary) 60%, var(--accent) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .text-gradient-green {
+      background: linear-gradient(135deg, var(--secondary) 0%, #a3e635 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ═══════════════ NAV ═══════════════ */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 16px 0;
+      background: rgba(11,17,32,0.8);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(30,41,59,0.5);
+      transition: all 0.3s ease;
+    }
+    nav.scrolled { padding: 10px 0; background: rgba(11,17,32,0.95); }
+    .nav-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      max-width: 1140px; margin: 0 auto; padding: 0 24px;
+    }
+    .nav-logo {
+      font-size: 22px; font-weight: 800; letter-spacing: -0.5px;
+      text-decoration: none;
+    }
+    .nav-logo span { color: var(--primary); }
+    .nav-links { display: flex; align-items: center; gap: 32px; list-style: none; }
+    .nav-links a {
+      color: var(--text-muted); text-decoration: none; font-size: 14px;
+      font-weight: 500; transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+
+    /* ═══════════════ BUTTONS ═══════════════ */
+    .btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 14px 32px; border-radius: 14px; font-size: 15px;
+      font-weight: 600; text-decoration: none; cursor: pointer;
+      border: none; transition: all 0.3s ease; position: relative;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: white; box-shadow: 0 4px 24px rgba(59,130,246,0.3);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(59,130,246,0.4);
+    }
+    .btn-secondary {
+      background: var(--bg-card); color: var(--text);
+      border: 1px solid var(--border-light);
+    }
+    .btn-secondary:hover { background: var(--bg-card-hover); transform: translateY(-2px); }
+    .btn-green {
+      background: linear-gradient(135deg, var(--secondary), #a3e635);
+      color: #0a1628; box-shadow: 0 4px 24px rgba(132,204,22,0.25);
+    }
+    .btn-green:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(132,204,22,0.35);
+    }
+    .btn-sm { padding: 10px 22px; font-size: 13px; border-radius: 10px; }
+    .btn-lg { padding: 18px 40px; font-size: 17px; border-radius: 16px; }
+    .btn-icon { font-size: 20px; }
+
+    /* ═══════════════ HERO ═══════════════ */
+    .hero {
+      min-height: 100vh; display: flex; align-items: center;
+      position: relative; overflow: hidden;
+      padding-top: 80px;
+    }
+    .hero::before {
+      content: ''; position: absolute;
+      top: -20%; right: -10%; width: 700px; height: 700px;
+      background: radial-gradient(circle, var(--glow-blue) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero::after {
+      content: ''; position: absolute;
+      bottom: -10%; left: -5%; width: 500px; height: 500px;
+      background: radial-gradient(circle, var(--glow-purple) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-content { position: relative; z-index: 2; }
+    .hero-grid {
+      display: grid; grid-template-columns: 1.1fr 0.9fr;
+      gap: 60px; align-items: center;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.2);
+      padding: 8px 18px; border-radius: 100px; font-size: 13px;
+      color: var(--primary); font-weight: 600; margin-bottom: 24px;
+    }
+    .hero-badge .pulse {
+      width: 8px; height: 8px; border-radius: 50%; background: var(--secondary);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.5); }
+    }
+    .hero h1 {
+      font-size: 56px; font-weight: 900; letter-spacing: -2px;
+      line-height: 1.1; margin-bottom: 20px;
+    }
+    .hero-desc {
+      font-size: 18px; color: var(--text-muted); line-height: 1.7;
+      margin-bottom: 36px; max-width: 520px;
+    }
+    .hero-actions { display: flex; gap: 16px; flex-wrap: wrap; }
+    .hero-stats {
+      display: flex; gap: 40px; margin-top: 48px;
+    }
+    .hero-stat-value {
+      font-size: 32px; font-weight: 900; letter-spacing: -1px;
+    }
+    .hero-stat-label { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+
+    /* Hero Visual - Phone Mockup */
+    .hero-visual { position: relative; display: flex; justify-content: center; }
+    .phone-mockup {
+      width: 280px; height: 560px; background: var(--bg-card);
+      border-radius: 36px; border: 3px solid var(--border-light);
+      overflow: hidden; position: relative;
+      box-shadow: 0 40px 80px rgba(0,0,0,0.4), 0 0 60px var(--glow-blue);
+    }
+    .phone-notch {
+      position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+      width: 120px; height: 28px; background: var(--bg-card);
+      border-radius: 0 0 18px 18px; z-index: 2;
+    }
+    .phone-screen {
+      width: 100%; height: 100%; padding: 40px 16px 16px;
+      background: linear-gradient(180deg, var(--bg) 0%, var(--bg-alt) 100%);
+      display: flex; flex-direction: column;
+    }
+    .phone-header {
+      text-align: center; margin-bottom: 16px;
+    }
+    .phone-header h3 { font-size: 16px; font-weight: 700; }
+    .phone-header p { font-size: 10px; color: var(--text-muted); }
+    .phone-macros {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 14px;
+    }
+    .phone-macro {
+      background: rgba(30,41,59,0.8); border-radius: 10px; padding: 8px 4px; text-align: center;
+    }
+    .phone-macro .val { font-size: 14px; font-weight: 800; }
+    .phone-macro .lbl { font-size: 8px; color: var(--text-muted); }
+    .phone-macro.cal .val { color: var(--warning); }
+    .phone-macro.pro .val { color: var(--error); }
+    .phone-macro.car .val { color: var(--primary); }
+    .phone-macro.fat .val { color: var(--secondary); }
+    .phone-meal {
+      background: var(--bg-card); border: 1px solid var(--border-light);
+      border-radius: 12px; padding: 10px 12px; margin-bottom: 8px;
+    }
+    .phone-meal h4 { font-size: 11px; font-weight: 700; margin-bottom: 4px; }
+    .phone-meal-item {
+      font-size: 9px; color: var(--text-muted); line-height: 1.6;
+    }
+    .phone-nav {
+      margin-top: auto; display: flex; justify-content: space-around;
+      background: var(--bg-card); border-radius: 14px; padding: 10px;
+    }
+    .phone-nav-item { text-align: center; font-size: 8px; color: var(--text-muted); }
+    .phone-nav-item.active { color: var(--primary); }
+    .phone-nav-icon { font-size: 16px; margin-bottom: 2px; }
+
+    /* Floating cards around phone */
+    .float-card {
+      position: absolute; background: var(--bg-card);
+      border: 1px solid var(--border-light); border-radius: 14px;
+      padding: 12px 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+      animation: float 6s ease-in-out infinite;
+      z-index: 3;
+    }
+    .float-card h5 { font-size: 11px; font-weight: 700; margin-bottom: 2px; }
+    .float-card p { font-size: 10px; color: var(--text-muted); }
+    .float-card.card-1 { top: 80px; right: -30px; animation-delay: 0s; }
+    .float-card.card-2 { bottom: 120px; left: -40px; animation-delay: 2s; }
+    .float-card.card-3 { top: 200px; left: -20px; animation-delay: 4s; }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-12px); }
+    }
+
+    /* ═══════════════ FEATURES ═══════════════ */
+    .features-section { background: var(--bg-alt); }
+    .section-label {
+      font-size: 13px; font-weight: 700; color: var(--primary);
+      letter-spacing: 2.5px; text-transform: uppercase; margin-bottom: 12px;
+    }
+    .section-title {
+      font-size: 40px; font-weight: 900; letter-spacing: -1.5px;
+      margin-bottom: 16px; line-height: 1.15;
+    }
+    .section-subtitle {
+      font-size: 17px; color: var(--text-muted); max-width: 560px;
+      margin: 0 auto 56px; line-height: 1.7;
+    }
+    .features-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+    }
+    .feature-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 18px; padding: 32px 28px;
+      transition: all 0.3s ease; position: relative; overflow: hidden;
+    }
+    .feature-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0;
+      height: 3px; border-radius: 18px 18px 0 0;
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .feature-card:hover { transform: translateY(-4px); border-color: var(--border-light); }
+    .feature-card:hover::before { opacity: 1; }
+    .feature-card.blue::before { background: var(--primary); }
+    .feature-card.green::before { background: var(--secondary); }
+    .feature-card.purple::before { background: var(--accent); }
+    .feature-card.amber::before { background: var(--warning); }
+    .feature-card.red::before { background: var(--error); }
+    .feature-card.teal::before { background: #14B8A6; }
+    .feature-icon {
+      width: 52px; height: 52px; border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 26px; margin-bottom: 20px;
+    }
+    .feature-icon.blue { background: rgba(59,130,246,0.12); }
+    .feature-icon.green { background: rgba(132,204,22,0.12); }
+    .feature-icon.purple { background: rgba(139,92,246,0.12); }
+    .feature-icon.amber { background: rgba(245,158,11,0.12); }
+    .feature-icon.red { background: rgba(239,68,68,0.12); }
+    .feature-icon.teal { background: rgba(20,184,166,0.12); }
+    .feature-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+    .feature-card p { font-size: 14px; color: var(--text-muted); line-height: 1.65; }
+
+    /* ═══════════════ HOW IT WORKS ═══════════════ */
+    .steps-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px;
+      position: relative;
+    }
+    .steps-grid::before {
+      content: ''; position: absolute; top: 44px; left: 13%; right: 13%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--primary), var(--accent), var(--secondary));
+      opacity: 0.3;
+    }
+    .step-card { text-align: center; position: relative; z-index: 2; }
+    .step-number {
+      width: 56px; height: 56px; border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; font-weight: 900; color: white;
+      margin: 0 auto 20px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      box-shadow: 0 4px 20px rgba(59,130,246,0.3);
+    }
+    .step-card h3 { font-size: 17px; font-weight: 700; margin-bottom: 8px; }
+    .step-card p { font-size: 13.5px; color: var(--text-muted); line-height: 1.6; }
+
+    /* ═══════════════ SCIENCE ═══════════════ */
+    .science-section { background: var(--bg-alt); }
+    .science-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start;
+    }
+    .science-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 18px; padding: 36px; position: relative; overflow: hidden;
+    }
+    .science-card::before {
+      content: ''; position: absolute; top: -80px; right: -80px;
+      width: 200px; height: 200px;
+      background: radial-gradient(circle, var(--glow-purple) 0%, transparent 70%);
+    }
+    .science-card h3 {
+      font-size: 20px; font-weight: 700; margin-bottom: 12px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .science-tag {
+      font-size: 10px; font-weight: 600; padding: 4px 12px;
+      border-radius: 8px; background: rgba(59,130,246,0.12); color: var(--primary);
+    }
+    .science-card p { font-size: 14px; color: var(--text-muted); line-height: 1.7; margin-bottom: 16px; }
+    .science-list { list-style: none; }
+    .science-list li {
+      font-size: 13.5px; color: var(--text-muted); padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .science-list li:last-child { border-bottom: none; }
+    .science-check {
+      width: 20px; height: 20px; border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; flex-shrink: 0;
+      background: rgba(132,204,22,0.12); color: var(--secondary);
+    }
+
+    /* ═══════════════ FOOD DB ═══════════════ */
+    .food-categories {
+      display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px;
+    }
+    .food-cat {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 16px; padding: 24px 18px; text-align: center;
+      transition: all 0.3s; cursor: default;
+    }
+    .food-cat:hover { transform: translateY(-4px); border-color: var(--border-light); }
+    .food-cat-icon { font-size: 36px; margin-bottom: 12px; }
+    .food-cat h4 { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+    .food-cat p { font-size: 12px; color: var(--text-muted); }
+    .food-cat .count {
+      display: inline-block; margin-top: 8px; font-size: 11px; font-weight: 600;
+      padding: 3px 10px; border-radius: 8px;
+      background: rgba(139,92,246,0.12); color: var(--accent);
+    }
+
+    /* ═══════════════ CTA ═══════════════ */
+    .cta-section {
+      background: linear-gradient(135deg, rgba(59,130,246,0.08), rgba(139,92,246,0.08));
+      border-top: 1px solid rgba(59,130,246,0.15);
+      border-bottom: 1px solid rgba(59,130,246,0.15);
+    }
+    .cta-inner {
+      text-align: center; max-width: 640px; margin: 0 auto;
+    }
+    .cta-inner h2 {
+      font-size: 40px; font-weight: 900; letter-spacing: -1.5px;
+      margin-bottom: 16px; line-height: 1.15;
+    }
+    .cta-inner p {
+      font-size: 17px; color: var(--text-muted); margin-bottom: 36px; line-height: 1.7;
+    }
+    .cta-actions { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+
+    /* ═══════════════ TESTIMONIAL / TRUST ═══════════════ */
+    .trust-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+    }
+    .trust-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 18px; padding: 28px;
+    }
+    .trust-stars { color: var(--warning); font-size: 14px; margin-bottom: 12px; letter-spacing: 2px; }
+    .trust-card blockquote {
+      font-size: 14px; color: var(--text-muted); line-height: 1.7;
+      font-style: italic; margin-bottom: 16px;
+    }
+    .trust-author {
+      display: flex; align-items: center; gap: 12px;
+    }
+    .trust-avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; font-weight: 700;
+    }
+    .trust-avatar.a1 { background: rgba(59,130,246,0.15); color: var(--primary); }
+    .trust-avatar.a2 { background: rgba(139,92,246,0.15); color: var(--accent); }
+    .trust-avatar.a3 { background: rgba(132,204,22,0.15); color: var(--secondary); }
+    .trust-name { font-size: 14px; font-weight: 600; }
+    .trust-role { font-size: 12px; color: var(--text-dim); }
+
+    /* ═══════════════ FAQ ═══════════════ */
+    .faq-list { max-width: 720px; margin: 0 auto; }
+    .faq-item {
+      border-bottom: 1px solid var(--border);
+      padding: 24px 0;
+    }
+    .faq-question {
+      font-size: 17px; font-weight: 600; cursor: pointer;
+      display: flex; justify-content: space-between; align-items: center;
+      transition: color 0.2s;
+    }
+    .faq-question:hover { color: var(--primary); }
+    .faq-toggle {
+      font-size: 22px; color: var(--text-dim); transition: transform 0.3s;
+      flex-shrink: 0; margin-left: 16px;
+    }
+    .faq-item.open .faq-toggle { transform: rotate(45deg); color: var(--primary); }
+    .faq-answer {
+      font-size: 14px; color: var(--text-muted); line-height: 1.7;
+      max-height: 0; overflow: hidden; transition: all 0.3s ease;
+      padding-top: 0;
+    }
+    .faq-item.open .faq-answer { max-height: 300px; padding-top: 16px; }
+
+    /* ═══════════════ FOOTER ═══════════════ */
+    footer {
+      background: var(--bg-alt); border-top: 1px solid var(--border);
+      padding: 48px 0 32px;
+    }
+    .footer-inner {
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 20px;
+    }
+    .footer-logo { font-size: 20px; font-weight: 800; }
+    .footer-logo span { color: var(--primary); }
+    .footer-copy { font-size: 13px; color: var(--text-dim); }
+    .footer-links { display: flex; gap: 24px; }
+    .footer-links a {
+      font-size: 13px; color: var(--text-muted); text-decoration: none;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--text); }
+
+    /* ═══════════════ RESPONSIVE ═══════════════ */
+    @media (max-width: 1024px) {
+      .hero h1 { font-size: 44px; }
+      .hero-grid { grid-template-columns: 1fr; text-align: center; }
+      .hero-desc { margin-left: auto; margin-right: auto; }
+      .hero-actions { justify-content: center; }
+      .hero-stats { justify-content: center; }
+      .hero-visual { margin-top: 48px; }
+      .float-card { display: none; }
+      .features-grid { grid-template-columns: repeat(2, 1fr); }
+      .steps-grid { grid-template-columns: repeat(2, 1fr); }
+      .steps-grid::before { display: none; }
+      .science-grid { grid-template-columns: 1fr; }
+      .food-categories { grid-template-columns: repeat(3, 1fr); }
+      .trust-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 640px) {
+      .hero h1 { font-size: 34px; }
+      .section { padding: 64px 0; }
+      .section-title { font-size: 30px; }
+      .features-grid { grid-template-columns: 1fr; }
+      .steps-grid { grid-template-columns: 1fr; }
+      .food-categories { grid-template-columns: repeat(2, 1fr); }
+      .hero-stats { flex-direction: column; gap: 16px; align-items: center; }
+      .nav-links { display: none; }
+    }
+
+    /* ═══════════════ SCROLLBAR ═══════════════ */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
+  </style>
+</head>
+<body>
+
+  <!-- ═══════════ NAVIGATION ═══════════ -->
+  <nav id="navbar">
+    <div class="nav-inner">
+      <a href="#" class="nav-logo">Nutri<span>AI</span></a>
+      <ul class="nav-links">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#how-it-works">How It Works</a></li>
+        <li><a href="#science">Science</a></li>
+        <li><a href="#faq">FAQ</a></li>
+        <!-- <li><a href="app/" class="btn btn-primary btn-sm">Launch App 🚀</a></li> -->
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ═══════════ HERO ═══════════ -->
+  <section class="hero">
+    <div class="container hero-content">
+      <div class="hero-grid">
+        <div>
+          <div class="hero-badge">
+            <span class="pulse"></span> AI-Powered Nutrition Planning
+          </div>
+          <h1>Eat smarter.<br><span class="text-gradient">Live better.</span></h1>
+          <p class="hero-desc">
+            NutriAI builds personalized meal plans tailored to your body, goals, and food preferences
+            — backed by science, not guesswork. Just answer a few questions, and your week is planned.
+          </p>
+          <div class="hero-actions">
+            <!-- <a href="app/" class="btn btn-primary btn-lg">
+              <span class="btn-icon">⚡</span> Start Free — Launch App
+            </a> -->
+            <a href="#how-it-works" class="btn btn-secondary btn-lg">See How It Works</a>
+          </div>
+          <div class="hero-stats">
+            <div>
+              <div class="hero-stat-value text-gradient">140+</div>
+              <div class="hero-stat-label">Foods in Database</div>
+            </div>
+            <div>
+              <div class="hero-stat-value text-gradient-green">10+</div>
+              <div class="hero-stat-label">Allergen Types</div>
+            </div>
+            <div>
+              <div class="hero-stat-value" style="color: var(--accent);">∞</div>
+              <div class="hero-stat-label">Plan Combinations</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-visual">
+          <div class="phone-mockup">
+            <div class="phone-notch"></div>
+            <div class="phone-screen">
+              <div class="phone-header">
+                <h3>📋 Day 1</h3>
+                <p>Your personalized plan</p>
+              </div>
+              <div class="phone-macros">
+                <div class="phone-macro cal"><div class="val">2,150</div><div class="lbl">kcal</div></div>
+                <div class="phone-macro pro"><div class="val">165g</div><div class="lbl">Protein</div></div>
+                <div class="phone-macro car"><div class="val">240g</div><div class="lbl">Carbs</div></div>
+                <div class="phone-macro fat"><div class="val">68g</div><div class="lbl">Fat</div></div>
+              </div>
+              <div class="phone-meal">
+                <h4>🌅 Breakfast</h4>
+                <div class="phone-meal-item">Oats with banana (80g)<br>Scrambled eggs (120g)<br>Blueberries (50g)</div>
+              </div>
+              <div class="phone-meal">
+                <h4>🥗 Lunch</h4>
+                <div class="phone-meal-item">Grilled chicken (180g)<br>Brown rice (150g)<br>Steamed broccoli (100g)</div>
+              </div>
+              <div class="phone-meal">
+                <h4>🌙 Dinner</h4>
+                <div class="phone-meal-item">Baked salmon (160g)<br>Roasted vegetables (200g)<br>Quinoa (80g)</div>
+              </div>
+              <div class="phone-nav">
+                <div class="phone-nav-item active"><div class="phone-nav-icon">🍽️</div>Nutrition</div>
+                <div class="phone-nav-item"><div class="phone-nav-icon">🛒</div>Shopping</div>
+              </div>
+            </div>
+          </div>
+          <div class="float-card card-1">
+            <h5>✅ Allergen Safe</h5>
+            <p>Gluten & lactose filtered</p>
+          </div>
+          <div class="float-card card-2">
+            <h5>🎯 Goal: Muscle Gain</h5>
+            <p>+15% calorie surplus</p>
+          </div>
+          <div class="float-card card-3">
+            <h5>🛒 Shopping List</h5>
+            <p>24 items organized</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ FEATURES ═══════════ -->
+  <section class="section features-section" id="features">
+    <div class="container text-center">
+      <div class="section-label">Features</div>
+      <h2 class="section-title">Everything you need to<br><span class="text-gradient">eat with purpose</span></h2>
+      <p class="section-subtitle">
+        NutriAI combines nutritional science with smart algorithms
+        to plan meals that fit your life — not the other way around.
+      </p>
+
+      <div class="features-grid">
+        <div class="feature-card blue">
+          <div class="feature-icon blue">🧬</div>
+          <h3>Science-Based Macros</h3>
+          <p>Auto-calculates your BMR, TDEE, and optimal macro split based on your body metrics, activity level, and fitness goal.</p>
+        </div>
+        <div class="feature-card green">
+          <div class="feature-icon green">🍽️</div>
+          <h3>Smart Meal Plans</h3>
+          <p>Generates complete daily meal plans with 3–6 meals, balanced macros, varied cooking methods, and perfect portions.</p>
+        </div>
+        <div class="feature-card purple">
+          <div class="feature-icon purple">🛡️</div>
+          <h3>Allergy Protection</h3>
+          <p>10+ allergen types with granular exceptions. Mark intolerances once, and your plans are always safe.</p>
+        </div>
+        <div class="feature-card amber">
+          <div class="feature-icon amber">❤️</div>
+          <h3>Your Favorites First</h3>
+          <p>Select the foods you love. The algorithm prioritizes your favorites while maintaining nutritional balance.</p>
+        </div>
+        <div class="feature-card red">
+          <div class="feature-icon red">🛒</div>
+          <h3>Auto Shopping Lists</h3>
+          <p>Instantly generates a categorized shopping list with exact quantities for all your planned meals.</p>
+        </div>
+        <div class="feature-card teal">
+          <div class="feature-icon teal">🔄</div>
+          <h3>Variety Control</h3>
+          <p>Choose low, medium, or high variety. Repeat what you love or discover new combinations every day.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ HOW IT WORKS ═══════════ -->
+  <section class="section" id="how-it-works">
+    <div class="container text-center">
+      <div class="section-label">How It Works</div>
+      <h2 class="section-title">Your plan in <span class="text-gradient">4 easy steps</span></h2>
+      <p class="section-subtitle">
+        No complicated forms or calorie counting. Just answer a few questions and let NutriAI do the rest.
+      </p>
+
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-number">1</div>
+          <h3>Set Preferences</h3>
+          <p>Select your allergies, favorite foods, and foods you'd rather avoid. Your plan, your rules.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-number">2</div>
+          <h3>Configure Goals</h3>
+          <p>Enter your body data or set macros manually. Choose to lose, maintain, or gain weight.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-number">3</div>
+          <h3>Generate Plan</h3>
+          <p>Pick how many days, meals per day, and variety level. NutriAI builds your full meal plan instantly.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-number">4</div>
+          <h3>Shop &amp; Eat</h3>
+          <p>Get your auto-generated shopping list, grab your ingredients, and start eating smarter today.</p>
+        </div>
+      </div>
+
+      <!-- <div style="margin-top: 56px;">
+        <a href="app/" class="btn btn-green btn-lg">
+          <span class="btn-icon">🚀</span> Try It Now — It's Free
+        </a>
+      </div> -->
+    </div>
+  </section>
+
+  <!-- ═══════════ SCIENCE ═══════════ -->
+  <section class="section science-section" id="science">
+    <div class="container">
+      <div class="text-center">
+        <div class="section-label">The Science</div>
+        <h2 class="section-title">Built on <span class="text-gradient">real nutrition science</span></h2>
+        <p class="section-subtitle">
+          Every calculation in NutriAI follows established nutritional research
+          and evidence-based formulas used by dietitians worldwide.
+        </p>
+      </div>
+
+      <div class="science-grid">
+        <div class="science-card">
+          <h3>🧮 Macro Calculator <span class="science-tag">Mifflin-St Jeor</span></h3>
+          <p>
+            We use the Mifflin-St Jeor equation — the gold standard for estimating Basal Metabolic Rate (BMR)
+            — combined with activity multipliers and goal-based adjustments.
+          </p>
+          <ul class="science-list">
+            <li><span class="science-check">✓</span> Sex, age, weight &amp; height considered</li>
+            <li><span class="science-check">✓</span> 5 activity levels (sedentary → very active)</li>
+            <li><span class="science-check">✓</span> Goal-adjusted: lose (-20%), maintain, gain (+15%)</li>
+            <li><span class="science-check">✓</span> Protein: 1.8–2.2g per kg of body weight</li>
+            <li><span class="science-check">✓</span> Fat: 25–28% of total calories</li>
+            <li><span class="science-check">✓</span> Remaining calories allocated to carbs</li>
+          </ul>
+        </div>
+
+        <div class="science-card">
+          <h3>🍽️ Smart Meal Engine <span class="science-tag">Constraint-Based</span></h3>
+          <p>
+            Our meal planner uses a multi-constraint algorithm that respects 
+            your preferences while hitting your exact nutritional targets.
+          </p>
+          <ul class="science-list">
+            <li><span class="science-check">✓</span> Allergen &amp; intolerance filtering</li>
+            <li><span class="science-check">✓</span> Breakfast-specific food selection</li>
+            <li><span class="science-check">✓</span> Lighter dinners with more vegetables</li>
+            <li><span class="science-check">✓</span> Portion scaling to match calorie targets</li>
+            <li><span class="science-check">✓</span> Variety enforcement across days</li>
+            <li><span class="science-check">✓</span> Auto-correction if daily deviation &gt; 5%</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ FOOD DATABASE ═══════════ -->
+  <section class="section">
+    <div class="container text-center">
+      <div class="section-label">Food Database</div>
+      <h2 class="section-title"><span class="text-gradient">140+ real foods</span> with full nutrition data</h2>
+      <p class="section-subtitle">
+        Every food in our database includes macros per 100g, allergen tags,
+        default serving sizes, and category classification.
+      </p>
+
+      <div class="food-categories">
+        <div class="food-cat">
+          <div class="food-cat-icon">🥩</div>
+          <h4>Proteins</h4>
+          <p>Chicken, salmon, eggs, tofu &amp; more</p>
+          <span class="count">26 foods</span>
+        </div>
+        <div class="food-cat">
+          <div class="food-cat-icon">🌾</div>
+          <h4>Carbs</h4>
+          <p>Rice, pasta, oats, potatoes &amp; more</p>
+          <span class="count">12 foods</span>
+        </div>
+        <div class="food-cat">
+          <div class="food-cat-icon">🥑</div>
+          <h4>Healthy Fats</h4>
+          <p>Olive oil, avocado, nuts &amp; seeds</p>
+          <span class="count">7+ foods</span>
+        </div>
+        <div class="food-cat">
+          <div class="food-cat-icon">🥬</div>
+          <h4>Vegetables</h4>
+          <p>Broccoli, spinach, peppers &amp; more</p>
+          <span class="count">12+ foods</span>
+        </div>
+        <div class="food-cat">
+          <div class="food-cat-icon">🍎</div>
+          <h4>Fruits</h4>
+          <p>Banana, berries, kiwi &amp; more</p>
+          <span class="count">10+ foods</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ TESTIMONIALS ═══════════ -->
+  <section class="section" style="background: var(--bg-alt);">
+    <div class="container text-center">
+      <div class="section-label">Testimonials</div>
+      <h2 class="section-title">Loved by people who take<br><span class="text-gradient">nutrition seriously</span></h2>
+      <p class="section-subtitle">See what our users have to say about their experience with NutriAI.</p>
+
+      <div class="trust-grid">
+        <div class="trust-card">
+          <div class="trust-stars">★★★★★</div>
+          <blockquote>"I used to spend an hour every Sunday planning meals. Now NutriAI does it in seconds — and the macros actually hit my targets."</blockquote>
+          <div class="trust-author">
+            <div class="trust-avatar a1">A</div>
+            <div><div class="trust-name">Alex R.</div><div class="trust-role">Fitness Enthusiast</div></div>
+          </div>
+        </div>
+        <div class="trust-card">
+          <div class="trust-stars">★★★★★</div>
+          <blockquote>"The allergy management is incredible. I have celiac disease and a nut allergy — NutriAI keeps me safe while giving me variety."</blockquote>
+          <div class="trust-author">
+            <div class="trust-avatar a2">M</div>
+            <div><div class="trust-name">Maria L.</div><div class="trust-role">Gluten-Free Lifestyle</div></div>
+          </div>
+        </div>
+        <div class="trust-card">
+          <div class="trust-stars">★★★★★</div>
+          <blockquote>"The shopping list feature alone is worth it. I walk into the store knowing exactly what I need for the whole week."</blockquote>
+          <div class="trust-author">
+            <div class="trust-avatar a3">J</div>
+            <div><div class="trust-name">James K.</div><div class="trust-role">Meal Prep Pro</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ FAQ ═══════════ -->
+  <section class="section" id="faq">
+    <div class="container text-center">
+      <div class="section-label">FAQ</div>
+      <h2 class="section-title">Frequently asked <span class="text-gradient">questions</span></h2>
+      <p class="section-subtitle" style="margin-bottom: 40px;">Everything you need to know about NutriAI.</p>
+
+      <div class="faq-list" style="text-align: left;">
+        <div class="faq-item open">
+          <div class="faq-question" onclick="toggleFaq(this)">
+            Is NutriAI free to use?
+            <span class="faq-toggle">+</span>
+          </div>
+          <div class="faq-answer">
+            Yes! NutriAI is completely free. You can generate unlimited meal plans, manage your preferences, and create shopping lists at no cost. The app is supported by non-intrusive banner ads.
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question" onclick="toggleFaq(this)">
+            How does the macro calculation work?
+            <span class="faq-toggle">+</span>
+          </div>
+          <div class="faq-answer">
+            NutriAI uses the Mifflin-St Jeor equation to calculate your Basal Metabolic Rate (BMR), then adjusts for your activity level to find your Total Daily Energy Expenditure (TDEE). Based on your goal (lose, maintain, or gain weight), it distributes calories across protein, carbs, and fat according to evidence-based guidelines.
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question" onclick="toggleFaq(this)">
+            Can I use it if I have food allergies?
+            <span class="faq-toggle">+</span>
+          </div>
+          <div class="faq-answer">
+            Absolutely. NutriAI supports 10+ allergen types including gluten, lactose, nuts, shellfish, eggs, soy, fish, and more. You can even set exceptions within allergen groups — for example, mark a specific fish as safe even if you're generally avoiding seafood.
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question" onclick="toggleFaq(this)">
+            What platforms does NutriAI work on?
+            <span class="faq-toggle">+</span>
+          </div>
+          <div class="faq-answer">
+            NutriAI works on iOS, Android, Web, macOS, Linux, and Windows. It's built with Flutter for a consistent experience across all platforms. You're using the web version right now!
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question" onclick="toggleFaq(this)">
+            Are the meal plans saved?
+            <span class="faq-toggle">+</span>
+          </div>
+          <div class="faq-answer">
+            Yes. Your generated meal plans are saved locally on your device, so you can close the app and come back anytime without losing your current plan. You can also regenerate a new plan whenever you want.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ CTA FINAL ═══════════ -->
+  <section class="section cta-section">
+    <div class="container">
+      <div class="cta-inner">
+        <h2>Ready to transform<br>how you <span class="text-gradient">eat</span>?</h2>
+        <p>
+          Stop guessing. Start planning. NutriAI builds your personalized meal plan in seconds
+          — complete with macros, portions, and a shopping list.
+        </p>
+        <!-- <div class="cta-actions">
+          <a href="app/" class="btn btn-primary btn-lg">
+            <span class="btn-icon">⚡</span> Launch NutriAI — Free
+          </a>
+        </div> -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ FOOTER ═══════════ -->
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-logo">Nutri<span>AI</span></div>
+        <div class="footer-links">
+          <a href="#features">Features</a>
+          <a href="#science">Science</a>
+          <a href="#faq">FAQ</a>
+          <!-- <a href="app/">Launch App</a> -->
+          <a href="privacy.html">Privacy Policy</a>
+        </div>
+        <div class="footer-copy">© 2026 NutriAI. All rights reserved.</div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ═══════════ SCRIPTS ═══════════ -->
+  <script>
+    // Navbar scroll effect
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 40);
+    });
+
+    // FAQ toggle
+    function toggleFaq(el) {
+      const item = el.parentElement;
+      const wasOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+      if (!wasOpen) item.classList.add('open');
+    }
+
+    // Smooth reveal on scroll
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.feature-card, .step-card, .science-card, .food-cat, .trust-card').forEach(el => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(20px)';
+      el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+      observer.observe(el);
+    });
+  </script>
+</body>
+</html>
