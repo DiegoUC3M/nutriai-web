@@ -107,18 +107,15 @@
 
   <div class="container">
     <h1>Privacy Policy</h1>
-    <p class="last-updated">Last updated: March 24, 2026</p>
+    <p class="last-updated">Last updated: November 26, 2026</p>
 
     <div class="highlight">
-      <p><strong>Summary:</strong> NutriAI does not collect, store, or share any personal data on external servers. All your information stays on your device. We use Google AdMob for advertising, which may collect limited data as described below.</p>
+      <p><strong>Summary:</strong> NutriAI processes meal-planning inputs and results on your device. NutriAI does not upload those inputs or results. Google AdMob separately processes data for ads, as described below.</p>
     </div>
 
     <h2>1. Introduction</h2>
     <p>
-      Welcome to NutriAI ("we", "our", "us"). This Privacy Policy explains how we handle information when you use our mobile application NutriAI (the "App"), available on Android, iOS, and Web platforms.
-    </p>
-    <p>
-      We are committed to protecting your privacy. By using the App, you agree to the practices described in this Privacy Policy.
+      Welcome to NutriAI ("we", "our", "us"). This Privacy Policy explains how we handle information when you use the NutriAI app (the "App").
     </p>
 
     <h2>2. Information We Collect</h2>
@@ -133,11 +130,11 @@
     </ul>
 
     <div class="highlight">
-      <p><strong>Important:</strong> All of this data is stored <strong>exclusively on your device</strong> using local storage (SharedPreferences). We do not transmit, collect, or have access to any of this information. No accounts or registration are required.</p>
+      <p><strong>Important:</strong> Sex, age, height, weight, activity level, and fitness goal are used to calculate macro targets and are not saved as separate fields. The app saves the generated meal plan, macro targets, food preferences and allergy settings, and plan configuration in local storage. No account or registration is required.</p>
     </div>
 
     <h3>2.2 Information Collected Automatically</h3>
-    <p>The App itself does not collect any analytics, usage data, crash reports, or device identifiers. However, third-party services integrated into the App may collect limited data as described in Section 4.</p>
+    <p>NutriAI does not use a separate analytics or crash-reporting service. The Google AdMob SDK may collect usage, diagnostic, and identifier data as described in Section 4.</p>
 
     <h2>3. How We Use Your Information</h2>
     <p>The personal data you enter into the App (body metrics, food preferences, etc.) is used solely for the following purposes:</p>
@@ -147,37 +144,37 @@
       <li>Creating shopping lists based on your generated meal plans</li>
       <li>Saving your preferences and meal plans locally so they persist between sessions</li>
     </ul>
-    <p>This data never leaves your device and is not shared with us or any third party.</p>
+    <p>NutriAI does not send your meal-planning inputs or results to us, to AdMob, or to any other external service.</p>
 
     <h2>4. Third-Party Services</h2>
 
     <h3>4.1 Google AdMob</h3>
     <p>
-      We use Google AdMob to display advertisements in the App. Google AdMob may collect and process certain information, including:
+      We use Google AdMob to serve ads on Android. The web app does not serve AdMob ads. Depending on your device, region, and privacy choices, Google AdMob may collect and share:
     </p>
     <ul>
-      <li>Device identifiers (advertising ID)</li>
-      <li>IP address</li>
+      <li>Device and other identifiers, such as Android advertising ID, app-set ID, and, where applicable, other identifiers related to accounts signed in on the device</li>
+      <li>IP address and approximate location inferred from it; NutriAI does not request access to device location</li>
       <li>General device information (model, OS version)</li>
-      <li>Ad interaction data (impressions, clicks)</li>
+      <li>Ad and app interactions, such as impressions, clicks, app launches, taps, and video views</li>
+      <li>SDK and app diagnostics, such as crash logs, launch times, hang rates, and energy usage</li>
     </ul>
     <p>
-      This data is collected and processed by Google in accordance with 
-      <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Google's Privacy Policy</a>. 
-      We do not have access to the personal data collected by Google AdMob.
+      Google may process this data for advertising, analytics, and fraud prevention. See
+      <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Google's Privacy Policy</a>
+      and <a href="https://developers.google.com/admob/android/privacy/play-data-disclosure" target="_blank" rel="noopener noreferrer">Google's Mobile Ads SDK data disclosure</a>.
     </p>
     <p>
-      Users in the European Economic Area (EEA) and the UK will be shown a consent dialog for personalized ads in compliance with GDPR regulations. You may opt out of personalized advertising through your device's settings.
+      At startup, the app checks Google User Messaging Platform (UMP) for any required consent message, including in the European Economic Area (EEA), United Kingdom, and Switzerland. The app requests ads only when UMP indicates that it may do so. When UMP requires a privacy-options entry point, select <strong>Privacy options</strong> above the app's bottom navigation to review or change your ad choices. The planner works without ads. Declining personalized ads does not necessarily remove all ads or prevent the processing needed to deliver and measure ads where permitted.
     </p>
 
     <h2>5. Data Storage and Security</h2>
     <p>
-      All user-provided data is stored locally on your device using the operating system's standard local storage mechanisms. We do not operate any servers, databases, or cloud storage that hold user data.
+      Saved meal plans and planner settings are stored locally using SharedPreferences (or browser storage on the web). We do not operate servers that store this planner data.
     </p>
     <ul>
-      <li><strong>Storage location:</strong> Your device only (SharedPreferences / local storage)</li>
-      <li><strong>Data transmission:</strong> None — no data is sent to external servers by us</li>
-      <li><strong>Data retention:</strong> Data persists until you clear the App's data, uninstall the App, or clear your browser storage</li>
+      <li><strong>Android backups:</strong> The app excludes the preferences file containing the saved plan, planner settings, and onboarding status from Android cloud backup and device-to-device transfer. Earlier versions may have used different backup rules.</li>
+      <li><strong>Data retention:</strong> You can remove the local data by clearing the app's data, uninstalling the app, or clearing the site's browser storage. Backup behavior outside Android can depend on your platform settings.</li>
     </ul>
 
     <h2>6. Children's Privacy</h2>
@@ -185,15 +182,13 @@
       NutriAI is not directed at children under the age of 13. We do not knowingly collect personal information from children under 13. The App does not require account creation or any form of registration.
     </p>
     <p>
-      Since all data is stored locally on the device and is never transmitted to us, we have no means of identifying or collecting data from any specific user, including minors.
+      NutriAI does not receive the meal-planning inputs or results of any user. AdMob's separate data processing is described in Section 4.
     </p>
 
     <h2>7. Your Rights</h2>
-    <p>Since we do not collect or store your data on any server, the following applies:</p>
     <ul>
-      <li><strong>Access and Deletion:</strong> All your data is on your device. You can delete it at any time by clearing the App's data in your device settings or by uninstalling the App.</li>
-      <li><strong>Portability:</strong> Your meal plans and preferences are stored locally and are not transferable between devices.</li>
-      <li><strong>Ad Preferences:</strong> You can opt out of personalized advertising through your device's advertising settings (Settings → Privacy → Advertising on iOS, or Settings → Google → Ads on Android).</li>
+      <li><strong>Access and Deletion:</strong> You can view your saved meal plan in the app and delete local planner data as described in Section 5.</li>
+      <li><strong>Ad Preferences:</strong> Use <strong>Privacy options</strong> when it is shown in the app. Android also provides system controls for resetting or deleting your advertising ID. See Google's Privacy Policy for more about Google's data controls.</li>
     </ul>
 
     <h2>8. Changes to This Privacy Policy</h2>
